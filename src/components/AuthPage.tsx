@@ -3,6 +3,7 @@ import { User } from '../types';
 import { getStoredUsers, saveUser, setCurrentUserId } from '../data/storage';
 import { Lock, Mail, User as UserIcon, Phone, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import logoImg from '../assets/images/quickpay_gold_logo_1789754815185.jpg';
+import { CartoonMascot, MascotField } from './CartoonMascot';
 
 interface AuthPageProps {
   onSuccess: (user: User) => void;
@@ -21,6 +22,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onSuccess, initialMode = 're
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   
+  // Active focused field for cartoon mascot animation
+  const [activeField, setActiveField] = useState<MascotField>(null);
+
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -123,19 +127,21 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onSuccess, initialMode = 're
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 bg-slate-50 text-slate-900">
       <div className="w-full max-w-md">
-        {/* Branding */}
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-600 text-white shadow-sm mb-3 overflow-hidden">
-            <img
-              src={logoImg}
-              alt="QuickPay"
-              className="w-full h-full object-cover"
-            />
-          </div>
+        {/* Animated Cartoon Mascot */}
+        <CartoonMascot
+          focusedField={activeField}
+          isPasswordVisible={showPassword}
+          isLoading={loading}
+          hasError={Boolean(error)}
+          mode={mode}
+        />
+
+        {/* Branding Title */}
+        <div className="text-center mb-4">
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             QuickPay
           </h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-slate-500 text-xs mt-0.5">
             {mode === 'register'
               ? 'Create your QuickPay wallet account'
               : 'Sign in to access your wallet'}
@@ -152,6 +158,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onSuccess, initialMode = 're
               onClick={() => {
                 setMode('register');
                 setError(null);
+                setActiveField(null);
               }}
               className={`py-2 text-xs font-semibold rounded-lg transition cursor-pointer ${
                 mode === 'register'
@@ -167,6 +174,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onSuccess, initialMode = 're
               onClick={() => {
                 setMode('login');
                 setError(null);
+                setActiveField(null);
               }}
               className={`py-2 text-xs font-semibold rounded-lg transition cursor-pointer ${
                 mode === 'login'
@@ -199,6 +207,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onSuccess, initialMode = 're
                     id="register-fullname"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    onFocus={() => setActiveField('name')}
+                    onBlur={() => setActiveField(null)}
                     placeholder="e.g. John Doe"
                     required={mode === 'register'}
                     className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition"
@@ -219,6 +229,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onSuccess, initialMode = 're
                     id="register-phone"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
+                    onFocus={() => setActiveField('phone')}
+                    onBlur={() => setActiveField(null)}
                     placeholder="e.g. 08012345678"
                     required={mode === 'register'}
                     className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition"
@@ -238,6 +250,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onSuccess, initialMode = 're
                   id="auth-email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setActiveField('email')}
+                  onBlur={() => setActiveField(null)}
                   placeholder="name@example.com"
                   required
                   className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition"
@@ -261,6 +275,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onSuccess, initialMode = 're
                   inputMode="numeric"
                   value={password}
                   onChange={(e) => handlePasswordChange(e.target.value)}
+                  onFocus={() => setActiveField('password')}
+                  onBlur={() => setActiveField(null)}
                   placeholder="••••••"
                   required
                   className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 font-mono tracking-widest placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition"
@@ -289,6 +305,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onSuccess, initialMode = 're
                     inputMode="numeric"
                     value={confirmPassword}
                     onChange={(e) => handleConfirmPasswordChange(e.target.value)}
+                    onFocus={() => setActiveField('confirmPassword')}
+                    onBlur={() => setActiveField(null)}
                     placeholder="••••••"
                     required
                     className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 font-mono tracking-widest placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition"
@@ -301,7 +319,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onSuccess, initialMode = 're
               type="submit"
               id="auth-submit-btn"
               disabled={loading}
-              className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-medium rounded-xl text-sm transition cursor-pointer disabled:opacity-60 shadow-xs"
+              className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-medium rounded-xl text-sm transition cursor-pointer disabled:opacity-60 shadow-xs mt-2"
             >
               {loading ? (
                 <span className="inline-flex items-center gap-2">
