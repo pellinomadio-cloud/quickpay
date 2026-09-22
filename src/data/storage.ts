@@ -1,10 +1,4 @@
 import { User, Transaction, QuickCode } from '../types';
-import {
-  firestoreSaveUser,
-  firestoreAddTransaction,
-  firestoreAddQuickCode,
-  firestoreConsumeQuickCode,
-} from '../firebase';
 
 const USERS_STORAGE_KEY = 'quickpay_registered_users_v1';
 const CURRENT_USER_ID_KEY = 'quickpay_current_user_id_v1';
@@ -41,11 +35,6 @@ export function saveUser(user: User): void {
     users.push(user);
   }
   localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-
-  // Sync to Firestore
-  firestoreSaveUser(user).catch((err) => {
-    console.warn('Firestore user save deferred or offline:', err?.message || err);
-  });
 }
 
 export function getCurrentUser(): User | null {
@@ -92,11 +81,6 @@ export function addTransaction(transaction: Transaction): void {
     const list = getTransactions(transaction.userId);
     const updated = [transaction, ...list];
     localStorage.setItem(`${TRANSACTIONS_STORAGE_KEY}_${transaction.userId}`, JSON.stringify(updated));
-
-    // Sync to Firestore
-    firestoreAddTransaction(transaction).catch((err) => {
-      console.warn('Firestore transaction save deferred or offline:', err?.message || err);
-    });
   } catch (e) {
     console.error('Error saving transaction:', e);
   }
@@ -150,11 +134,6 @@ export function addQuickCode(quickCode: QuickCode): void {
     const list = getQuickCodes(quickCode.userId);
     const updated = [quickCode, ...list];
     localStorage.setItem(`${QUICK_CODES_STORAGE_KEY}_${quickCode.userId}`, JSON.stringify(updated));
-
-    // Sync to Firestore
-    firestoreAddQuickCode(quickCode).catch((err) => {
-      console.warn('Firestore quick code save deferred or offline:', err?.message || err);
-    });
   } catch (e) {
     console.error('Error saving quick code:', e);
   }
@@ -194,11 +173,6 @@ export function consumeQuickCode(userId: string, codeString: string, txRef: stri
     matchedCode.usedForTxRef = txRef;
 
     localStorage.setItem(`${QUICK_CODES_STORAGE_KEY}_${userId}`, JSON.stringify(codes));
-
-    // Sync update to Firestore
-    firestoreConsumeQuickCode(userId, matchedCode.id, txRef).catch((err) => {
-      console.warn('Firestore quick code status update deferred or offline:', err?.message || err);
-    });
 
     return true;
   } catch (e) {

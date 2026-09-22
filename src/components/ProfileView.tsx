@@ -83,52 +83,49 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#f8fafc] flex flex-col pb-28">
+    <div className="w-full min-h-screen bg-slate-50 flex flex-col pb-28 text-slate-900">
       {/* Top Header */}
       {onBackToHome && (
-        <header className="bg-gradient-to-r from-[#022818] via-[#044329] to-[#022818] text-white sticky top-0 z-30 shadow-md">
-          <div className="px-4 sm:px-6 py-4 flex items-center justify-between">
+        <header className="bg-white border-b border-slate-200 text-slate-900 sticky top-0 z-30">
+          <div className="px-4 sm:px-6 py-3.5 flex items-center justify-between max-w-xl mx-auto">
             <button
               type="button"
               id="profile-page-back-btn"
               onClick={onBackToHome}
-              className="flex items-center gap-1.5 py-1.5 px-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition cursor-pointer"
+              className="flex items-center gap-1.5 py-1.5 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back</span>
             </button>
 
             <div className="text-center">
-              <h1 className="text-base font-extrabold tracking-tight text-white">Profile & Security</h1>
-              <p className="text-[10px] text-emerald-200/90 font-medium">QuickPay Account</p>
+              <h1 className="text-sm font-bold text-slate-900">Profile & Security</h1>
             </div>
 
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-[#e5b74b] p-0.5">
-              <img src={logoImg} alt="QuickPay" className="w-full h-full object-cover rounded-full" />
+            <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-200 bg-emerald-700">
+              <img src={logoImg} alt="QuickPay" className="w-full h-full object-cover" />
             </div>
           </div>
         </header>
       )}
 
-      <div className="w-full max-w-xl mx-auto px-4 sm:px-6 pt-5">
+      <div className="w-full max-w-xl mx-auto px-4 sm:px-6 pt-4 space-y-4">
         {/* Profile Card Header */}
-        <div className="bg-gradient-to-br from-[#033421] via-[#054b30] to-[#022818] rounded-3xl p-6 text-white shadow-lg border border-emerald-500/20 mb-5 relative overflow-hidden">
-          <div className="flex items-center gap-4 relative z-10">
-            <div className="p-0.5 rounded-full bg-gradient-to-tr from-[#e5b74b] to-[#ffd269] shadow-md">
-              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-emerald-950">
-                <img src={logoImg} alt="QuickPay" className="w-full h-full object-cover" />
-              </div>
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full overflow-hidden border border-slate-200 bg-emerald-700 shrink-0">
+              <img src={logoImg} alt="QuickPay" className="w-full h-full object-cover" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h3 className="text-xl font-extrabold text-white tracking-tight">{user.name}</h3>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[10px] font-bold rounded-full">
-                  <ShieldCheck className="w-3 h-3 text-[#e5b74b]" />
-                  Verified Member
+                <h3 className="text-base font-bold text-slate-900 truncate">{user.name}</h3>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-semibold rounded-md shrink-0">
+                  <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                  Verified
                 </span>
               </div>
-              <p className="text-xs text-emerald-200/80 mt-0.5">{user.email}</p>
-              <p className="text-xs text-[#ffd778] font-medium mt-1">
+              <p className="text-xs text-slate-500 mt-0.5 truncate">{user.email}</p>
+              <p className="text-xs font-semibold text-emerald-700 mt-1">
                 Balance: {formatNaira(user.balance)}
               </p>
             </div>
@@ -217,24 +214,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               )}
             </button>
           </div>
-        </div>
-
-        {/* Firebase Cloud Sync Status Card */}
-        <div className="bg-gradient-to-r from-emerald-950 via-[#033421] to-[#044329] rounded-2xl p-4 text-white shadow-xs border border-emerald-500/30 mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <h4 className="text-xs font-bold text-emerald-100 uppercase tracking-wider">
-                Firebase Firestore
-              </h4>
-            </div>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
-              Live Connected
-            </span>
-          </div>
-          <p className="text-[11px] text-emerald-200/80 leading-relaxed">
-            Wallet balances, transaction history, and clearance codes are persistently synchronized to your private Google Cloud Firestore partition.
-          </p>
         </div>
 
         {/* Account Actions */}

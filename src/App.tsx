@@ -4,17 +4,8 @@ import {
   getCurrentUser,
   setCurrentUserId,
   getTransactions,
-  setTransactions as setStoredTransactions,
   saveUser,
 } from './data/storage';
-import {
-  auth,
-  onAuthStateChanged,
-  FirebaseUser,
-  subscribeToFirestoreTransactions,
-  firestoreGetUser,
-  signOutUser,
-} from './firebase';
 
 import { DashboardHeader } from './components/DashboardHeader';
 import { BalanceCard } from './components/BalanceCard';
@@ -54,46 +45,13 @@ export default function App() {
     return user ? getTransactions(user.id) : [];
   });
 
-  // Listen to Firebase Auth state
-  useEffect(() => {
-    const unsubAuth = onAuthStateChanged(auth, async (fbUser: FirebaseUser | null) => {
-      if (fbUser) {
-        try {
-          const profile = await firestoreGetUser(fbUser.uid);
-          if (profile) {
-            setLocalCurrentUser(profile);
-            setCurrentUserId(profile.id);
-            saveUser(profile);
-          }
-        } catch (e) {
-          console.warn('Firestore user fetch on auth change:', e);
-        }
-      }
-    });
-    return () => unsubAuth();
-  }, []);
-
-  // Real-time Firestore transactions subscription
+  // Load user transactions when currentUser changes
   useEffect(() => {
     if (!currentUser) {
       setTransactions([]);
       return;
     }
-
-    // Immediate local cache display
     setTransactions(getTransactions(currentUser.id));
-
-    // Real-time Firestore subscription
-    const unsubTx = subscribeToFirestoreTransactions(currentUser.id, (firestoreTxs) => {
-      if (firestoreTxs && firestoreTxs.length > 0) {
-        setTransactions(firestoreTxs);
-        setStoredTransactions(currentUser.id, firestoreTxs);
-      }
-    });
-
-    return () => {
-      unsubTx();
-    };
   }, [currentUser?.id]);
 
   const navigateTo = (page: ActivePage) => {
@@ -124,7 +82,6 @@ export default function App() {
   };
 
   const handleLogout = () => {
-    signOutUser().catch(() => {});
     setCurrentUserId(null);
     setLocalCurrentUser(null);
     setShowAuth(true);
