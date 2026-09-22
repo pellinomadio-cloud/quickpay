@@ -1,0 +1,68 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile and wallet ledger balance",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 120 },
+        "email": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "balance": { "type": "number" },
+        "createdAt": { "type": "string", "maxLength": 60 }
+      },
+      "required": ["id", "name", "email", "balance", "createdAt"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Transaction entry for deposits, transfers, bills, and data",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "maxLength": 30 },
+        "title": { "type": "string", "maxLength": 150 },
+        "subtitle": { "type": "string", "maxLength": 200 },
+        "amount": { "type": "number" },
+        "isCredit": { "type": "boolean" },
+        "date": { "type": "string", "maxLength": 60 },
+        "status": { "type": "string", "maxLength": 20 },
+        "reference": { "type": "string", "maxLength": 100 },
+        "network": { "type": "string", "maxLength": 50 },
+        "recipient": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["id", "userId", "type", "title", "subtitle", "amount", "isCredit", "status", "reference"]
+    },
+    "QuickCode": {
+      "title": "QuickCode",
+      "description": "Clearance code record for withdrawals",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "code": { "type": "string", "maxLength": 30 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "amountPaid": { "type": "number" },
+        "createdAt": { "type": "string", "maxLength": 60 },
+        "status": { "type": "string", "maxLength": 20 },
+        "usedAt": { "type": "string", "maxLength": 60 },
+        "usedForTxRef": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["id", "code", "userId", "amountPaid", "createdAt", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile with private balance and personal details"
+    },
+    "/users/{userId}/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "Ledger of transactions belonging to this user"
+    },
+    "/users/{userId}/quickCodes/{codeId}": {
+      "schema": "QuickCode",
+      "description": "User generated quick withdrawal clearance codes"
+    }
+  }
+}

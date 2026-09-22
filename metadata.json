@@ -1,0 +1,6 @@
+{
+  "name": "QuickPay",
+  "description": "Fast and secure digital wallet for airtime, data, bill payments, and instant money transfers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
